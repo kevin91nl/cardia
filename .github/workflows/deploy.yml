@@ -21,9 +21,7 @@ jobs:
         pip install wheel
     - name: Update version in setup.py
       run: >-
-        export GITHUB_REF="${{ github.ref }}"
-        export VERSION="${GITHUB_REF##*/}"
-        sed -i "s/{{VERSION_PLACEHOLDER}}/${VERSION}/g" setup.py
+        sed -i "s/{{VERSION_PLACEHOLDER}}/${{ GITHUB_REF/refs\/tags\// }}/g" setup.py
     - name: Build a binary wheel
       run: >-
         python setup.py sdist bdist_wheel

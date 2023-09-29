@@ -1,32 +1,35 @@
-name: Deploy to PyPI
+name: Publish Python 🐍 distributions 📦 to PyPI
 
 on:
   push:
     branches:
       - main
+      - dev
 
 jobs:
-  deploy:
+  build-n-publish:
+    name: Build and publish Python 🐍 distributions 📦 to PyPI
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.11
-
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install wheel
-
-      - name: Build and Deploy
-        run: |
-          python setup.py sdist bdist_wheel
-          python -m twine upload dist/*
-        env:
-          TWINE_USERNAME: ${{secrets.PYPI_USERNAME}}
-          TWINE_PASSWORD: ${{secrets.PYPI_PASSWORD}}
+    - uses: actions/checkout@master
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.11'
+    - name: Install pypa/setuptools
+      run: >-
+        python -m
+        pip install wheel
+    - name: Extract tag name
+      id: tag
+      run: echo ::set-output name=TAG_NAME::$(echo $GITHUB_REF | cut -d / -f 3)
+    - name: Update version in setup.py
+      run: >-
+        sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.tag.outputs.TAG_NAME }}/g" setup.py
+    - name: Build a binary wheel
+      run: >-
+        python setup.py sdist bdist_wheel
+    - name: Publish distribution 📦 to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        password: ${{ secrets.PYPI_API_TOKEN }}

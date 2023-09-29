@@ -21,7 +21,10 @@ jobs:
         pip install wheel
     - name: Update version in setup.py
       run: >-
-        sed -i "s/{{VERSION_PLACEHOLDER}}/${{ GITHUB_REF/refs\/tags\// }}/g" setup.py
+        # Replace {{VERSION_PLACEHOLDER}} with the actual tag (e.g. 1.0.0 for refs/tags/v1.0.0)
+        # Note that we cannot use the ${ github.ref } variable directly because
+        # contains a / which cannot be used during sed's substitution.
+        sed -i "s/{{VERSION_PLACEHOLDER}}/${ github.ref#refs\/tags\/}/" setup.py
     - name: Build a binary wheel
       run: >-
         python setup.py sdist bdist_wheel

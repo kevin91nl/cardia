@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+import subprocess
 
 setup(
     name='cardia',
-    version='{{VERSION_PLACEHOLDER}}'.split('/')[-1].replace('v', ''),
+    version=subprocess.check_output(['git', 'describe', '--tags']).decode('utf-8').strip().lstrip('v').split('-')[0],
     packages=find_packages(),
     install_requires=[
         # Add any required dependencies here

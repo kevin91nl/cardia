@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='cardia',
-    version='{{VERSION_PLACEHOLDER}}',
+    version='{{VERSION_PLACEHOLDER}}'.split('/')[-1].replace('v', ''),
     packages=find_packages(),
     install_requires=[
         # Add any required dependencies here
